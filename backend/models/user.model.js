@@ -1,51 +1,60 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";  
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
+
 const UserSchema = new mongoose.Schema({
   fullname: {
-    type: String,
-    required: true, 
-    trim: true, 
-    minlength: [3, 'Firstname must be at least 3 characters']
-  },
-  lastname: {
-    type: String,
-    trim: true, 
+      firstname: {
+          type: String,
+          required: true,
+          minlength: [ 3, 'First name must be at least 3 characters long' ],
+      },
+      lastname: {
+          type: String,
+          minlength: [ 3, 'Last name must be at least 3 characters long' ],
+      }
   },
   email: {
-    type: String,
-    required: true,
-    unique: true, 
-    lowercase: true, 
-    match: [/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, 'Please fill a valid email address'], 
+      type: String,
+      required: true,
+      unique: true,
+      minlength: [ 5, 'Email must be at least 5 characters long' ],
   },
   password: {
-    type: String,
-    required: true,
-  }, 
-  socketid: {
-    type: String,
-    default: null, 
+      type: String,
+      required: true,
+      select: false,
   },
-});
-
-UserSchema.methods.generateAuthtoken = function() {
-  const payload = { userId: this._id, email: this.email };  
-  const secretKey = process.env.JWT_SECRET ; 
-  const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });  
+  socketId: {
+      type: String,
+  },
+})
+// Instance method to generate JWT token
+UserSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
   return token;
 };
 
-UserSchema.pre('save', async function(next) {
-  if (this.isModified('password')) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+// Instance method to compare passwords
+UserSchema.methods.comparePassword = async function (password) {
+  try {
+    return await bcrypt.compare(password, this.password);
+  } catch (error) {
+    throw new Error("Error comparing passwords");
   }
-  next();
-});
+};
+
+// Static method to hash password
+UserSchema.statics.hashPassword = async function (password) {
+  try {
+    return await bcrypt.hash(password, 10);
+  } catch (error) {
+    throw new Error("Error hashing password");
+  }
+};
 
 const User = mongoose.model("User", UserSchema);
 
