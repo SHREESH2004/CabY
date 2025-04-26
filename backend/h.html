@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>maps</title>
+	<style type="text/css">
+		#map-canvas{
+			width: 500px;
+			height: 500px;
+		}
+	</style>
+
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuAVuyygNAldAuFFN23Z5f8d9r78phjyk&libraries=places" type="text/javascript">
+    </script>
+
+</head>
+
+<body>
+
+<h1>Location routing</h1>
+
+
+<div id="map-canvas"></div>
+
+<button id="get">get directions</button>
+
+<script type="text/javascript">
+
+	var d;
+ 	var c;
+
+	var final = document.getElementsByName("doctors").value;
+
+	//if (final=="1") {var location = { "lat" : d , "long" : c };}
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } 
+
+ 
+
+ var f=27.711360;
+ var g=85.328761;
+function showPosition(position) {
+
+   d=(position.coords.latitude);
+   c=(position.coords.longitude);
+
+   
+
+  
+	
+
+
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+	var directionsService = new google.maps.DirectionsService();
+
+	var map;
+
+	var  boudha  = new google.maps.LatLng(location.lat, location.long);
+	var hattisar = new google.maps.LatLng(27.711360, 85.318781);
+
+	var mapOptions ={
+		zoom: 14,
+		center: boudha
+	};
+	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+directionsDisplay.setMap(map);
+function calculateRoute() {
+	var request ={
+		origin: boudha,
+		destination: hattisar,
+		travelMode: 'DRIVING'
+	};
+	directionsService.route(request, function(result,status){  
+		if (status=="OK") {
+
+			directionsDisplay.setDirections(result);
+		} 
+	});
+}
+document.getElementById('get').onclick=function(){
+	calculateRoute();
+};
+   
+}
+
+
+	
+	
+
+
+</script>
+
+</body>
+</html>

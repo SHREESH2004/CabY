@@ -31,6 +31,8 @@ const UserSchema = new mongoose.Schema({
   socketId: {
       type: String,
   },
+},{
+  timestamps: true,
 })
 // Instance method to generate JWT token
 UserSchema.methods.generateAuthToken = function () {

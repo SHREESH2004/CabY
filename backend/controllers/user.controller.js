@@ -3,7 +3,9 @@ import { createUser } from "../service/user.service.js";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser"; // Ensure this is used in your app for cookie parsing
+import BlacklistToken from "../models/blacklist.model.js"; // Import BlacklistToken model
 
+// Register user
 export const registerUser = async (req, res, next) => {
   // Validate request body
   const errors = validationResult(req);
@@ -41,6 +43,7 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
+// Login user
 export const loginUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -68,21 +71,36 @@ export const loginUser = async (req, res, next) => {
     // Set token in cookies
     res.cookie('token', token, { httpOnly: true });
 
-    // Send response with token and user info
     res.status(200).json({ token, user });
   } catch (error) {
-    next(error); // Handle any unexpected errors
+    next(error); 
   }
 };
 
 export const getUserProfile = async (req, res) => {
-  res.status(200).json(req.user);
+  try {
+    const token = req.cookies?.token || req.headers?.authorization?.split(' ')[1];
+    const blacklistedToken = await BlacklistToken.findOne({ token });
+    if (blacklistedToken) {
+      return res.status(401).json({ message: "Token has been blacklisted. Please log in again." });
+    }
+
+    res.status(200).json(req.user); 
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving user profile' });
+  }
 };
 
 export const logoutUser = async (req, res) => {
   try {
 
     res.clearCookie('token');
+
+    const token = req.cookies?.token || req.headers?.authorization?.split(' ')[1];
+
+    if (token) {
+      await BlacklistToken.create({ token });
+    }
 
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
