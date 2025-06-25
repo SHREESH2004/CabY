@@ -1,5 +1,5 @@
 
-<h1 align="center">🚖 Caby – Your Personal Cab Booking Platform</h1>
+<h1 align="center">🚖 CabY – Your Personal Cab Booking Platform</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Made%20With-Node.js-green?style=flat-square" />
