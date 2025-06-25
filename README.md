@@ -158,16 +158,3 @@ If you find this project helpful, please ⭐ the repo and share with others!
 ## 📜 License
 
 MIT License © 2025 [Shreesh Sanyal](https://github.com/ShreeshSanyal)
-
-```
-
----
-
-### ✅ Tips to Enhance Further:
-- Add **screenshots or gifs** of the UI in action under a `📸 Screenshots` section.
-- Embed a **demo video** (via Loom or YouTube) using a Markdown image with a play button.
-- Connect a **live deployment link** (Vercel/Render/Heroku).
-- Use **badges** for test coverage, CI/CD status, and GitHub insights.
-
-Would you like me to help generate the screenshots section or add a live demo setup guide too?
-```
